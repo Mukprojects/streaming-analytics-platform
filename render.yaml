@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: streaming-platform
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: REDIS_HOST
+        value: redis
+      - key: RATE  
+        value: 100
+      - key: PORT
+        value: 8080
+
+  - type: redis
+    name: redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru

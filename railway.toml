@@ -1,0 +1,20 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+
+[[services]]
+name = "api"
+source = "api/"
+
+[[services]]
+name = "producer" 
+source = "producer/"
+
+[[services]]
+name = "processor"
+source = "processor/"
