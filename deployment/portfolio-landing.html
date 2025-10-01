@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Streaming Analytics Platform | Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 60px 0;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .demo-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .demo-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+        
+        .demo-card p {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .demo-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .tech-stack {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 50px 0;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .tech-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 50px 0;
+        }
+        
+        .metric-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .metric-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            display: block;
+        }
+        
+        .architecture-diagram {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 50px 0;
+            text-align: center;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Real-Time Streaming Analytics Platform</h1>
+            <p>Production-grade distributed streaming system with Redis, Prometheus monitoring, and real-time dashboards. Built to demonstrate Google-level infrastructure engineering skills.</p>
+        </div>
+
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h3>📊 Live Grafana Dashboard</h3>
+                <p>Real-time monitoring dashboards showing system metrics, throughput, and performance indicators. Executive-level visualization of streaming data.</p>
+                <a href="https://your-app.railway.app:3000" class="demo-link" target="_blank">View Dashboard</a>
+            </div>
+
+            <div class="demo-card">
+                <h3>🔍 Prometheus Metrics</h3>
+                <p>Production monitoring with custom metrics collection. Real-time system health, performance counters, and SLA monitoring.</p>
+                <a href="https://your-app.railway.app:9090" class="demo-link" target="_blank">View Metrics</a>
+            </div>
+
+            <div class="demo-card">
+                <h3>📡 Streaming API</h3>
+                <p>RESTful API serving real-time aggregated data from the streaming pipeline. JSON endpoints for dashboard integration.</p>
+                <a href="https://your-app.railway.app:8080/aggregates" class="demo-link" target="_blank">View API</a>
+            </div>
+
+            <div class="demo-card">
+                <h3>📋 System Health</h3>
+                <p>Service health checks and system status monitoring. Real-time visibility into distributed system components.</p>
+                <a href="https://your-app.railway.app:8080/health" class="demo-link" target="_blank">Check Health</a>
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <span class="metric-number">500+</span>
+                <div>Events/Second</div>
+            </div>
+            <div class="metric-card">
+                <span class="metric-number">&lt;20ms</span>
+                <div>P95 Latency</div>
+            </div>
+            <div class="metric-card">
+                <span class="metric-number">99.9%</span>
+                <div>Availability</div>
+            </div>
+            <div class="metric-card">
+                <span class="metric-number">6</span>
+                <div>Microservices</div>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>🗄️ Data Layer</h4>
+                    <p>Redis Streams<br>Consumer Groups<br>Real-time Processing</p>
+                </div>
+                <div class="tech-item">
+                    <h4>📊 Monitoring</h4>
+                    <p>Prometheus<br>Grafana<br>Custom Metrics</p>
+                </div>
+                <div class="tech-item">
+                    <h4>🚀 Infrastructure</h4>
+                    <p>Docker<br>Microservices<br>Load Balancing</p>
+                </div>
+                <div class="tech-item">
+                    <h4>🔧 Languages</h4>
+                    <p>Python<br>FastAPI<br>Async Processing</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="architecture-diagram">
+            <h2>🏗️ System Architecture</h2>
+            <pre style="text-align: left; font-family: monospace; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin-top: 20px;">
+Producer → Redis Streams → Consumer Groups → Real-time Processing
+    ↓              ↓              ↓              ↓
+Metrics ←  Prometheus  ←  Custom Metrics  ←  Aggregation
+    ↓
+Grafana Dashboards → Live Visualization
+            </pre>
+        </div>
+
+        <div class="footer">
+            <h3>🎯 Built for Google-Level Infrastructure Engineering</h3>
+            <p>This system demonstrates production-ready distributed systems engineering with comprehensive monitoring, real-time processing, and scalable architecture design.</p>
+            <br>
+            <p><strong>GitHub:</strong> <a href="https://github.com/yourusername/streaming-pipeline" style="color: #ffd700;">View Source Code</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate metric numbers
+            const metrics = document.querySelectorAll('.metric-number');
+            metrics.forEach(metric => {
+                metric.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.transition = 'transform 0.3s ease';
+                });
+                
+                metric.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

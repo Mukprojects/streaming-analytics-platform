@@ -1,0 +1,8 @@
+{
+  "duration": 60.01340937614441,
+  "events_processed": 27254,
+  "throughput": 454.1318395890633,
+  "api_requests": 59,
+  "api_errors": 0,
+  "avg_api_latency": 0.02633600315805209
+}

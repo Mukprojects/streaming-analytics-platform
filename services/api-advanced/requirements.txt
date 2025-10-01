@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+redis[hiredis]
+orjson
+graphene
+strawberry-graphql
+websockets
+aioredis
+prometheus-client
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-jaeger-thrift
+opentelemetry-instrumentation-fastapi
+pydantic
+structlog
+asyncio-mqtt

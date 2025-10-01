@@ -1,0 +1,182 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Advanced Streaming Pipeline - Executive Dashboard",
+    "tags": ["streaming", "advanced", "executive"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Real-Time Throughput",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(events_produced_total[1m]))",
+            "legendFormat": "Events/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 100},
+                {"color": "green", "value": 500}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Processing Latency (95th percentile)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(processing_latency_seconds_bucket[5m])) by (le))",
+            "legendFormat": "P95 Latency"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 0.05},
+                {"color": "red", "value": 0.1}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "System Health Score",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "(1 - rate(api_requests_total{status=~\"5..\"}[5m]) / rate(api_requests_total[5m])) * 100",
+            "legendFormat": "Health %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "unit": "percent",
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 95},
+                {"color": "green", "value": 99}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "Active Chaos Experiments",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(chaos_experiments_total[1h]))",
+            "legendFormat": "Experiments/hour"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}
+      },
+      {
+        "id": 5,
+        "title": "Event Processing Pipeline",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(events_produced_total[1m])) by (producer_type)",
+            "legendFormat": "Produced - {{producer_type}}"
+          },
+          {
+            "expr": "sum(rate(events_processed_total[1m])) by (stage)",
+            "legendFormat": "Processed - {{stage}}"
+          }
+        ],
+        "gridPos": {"h": 10, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 6,
+        "title": "ML Anomaly Detection",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(anomaly_score_bucket[5m]))",
+            "legendFormat": "95th percentile anomaly score"
+          },
+          {
+            "expr": "rate(anomaly_score_count[5m])",
+            "legendFormat": "Anomaly checks/sec"
+          }
+        ],
+        "gridPos": {"h": 10, "w": 12, "x": 12, "y": 8}
+      },
+      {
+        "id": 7,
+        "title": "Redis Cluster Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "redis_connected_clients",
+            "legendFormat": "Connected clients - {{instance}}"
+          },
+          {
+            "expr": "rate(redis_commands_processed_total[1m])",
+            "legendFormat": "Commands/sec - {{instance}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 18}
+      },
+      {
+        "id": 8,
+        "title": "Circuit Breaker Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "circuit_breaker_open",
+            "legendFormat": "Circuit Breaker"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"options": {"0": {"text": "CLOSED", "color": "green"}}},
+              {"options": {"1": {"text": "OPEN", "color": "red"}}}
+            ]
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 18}
+      },
+      {
+        "id": 9,
+        "title": "WebSocket Connections",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "websocket_connections_active",
+            "legendFormat": "Active Connections"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 18}
+      }
+    ],
+    "time": {"from": "now-1h", "to": "now"},
+    "refresh": "5s",
+    "schemaVersion": 27,
+    "version": 1
+  }
+}

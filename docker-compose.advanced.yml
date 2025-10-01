@@ -1,0 +1,160 @@
+version: "3.8"
+
+services:
+  # Redis Cluster for horizontal scaling
+  redis-node-1:
+    image: redis:7-alpine
+    command: redis-server --port 7001 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports: ["7001:7001"]
+    volumes: ["redis-1:/data"]
+
+  redis-node-2:
+    image: redis:7-alpine
+    command: redis-server --port 7002 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports: ["7002:7002"]
+    volumes: ["redis-2:/data"]
+
+  redis-node-3:
+    image: redis:7-alpine
+    command: redis-server --port 7003 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports: ["7003:7003"]
+    volumes: ["redis-3:/data"]
+
+  # Cluster initialization
+  redis-cluster-init:
+    image: redis:7-alpine
+    depends_on: [redis-node-1, redis-node-2, redis-node-3]
+    command: >
+      sh -c "
+        sleep 10 &&
+        redis-cli --cluster create 
+        redis-node-1:7001 redis-node-2:7002 redis-node-3:7003 
+        --cluster-replicas 0 --cluster-yes
+      "
+
+  # Advanced monitoring stack
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/rules:/etc/prometheus/rules:ro
+    ports: ["9090:9090"]
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_FEATURE_TOGGLES_ENABLE=ngalert
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports: ["3000:3000"]
+
+  # Jaeger for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "14268:14268"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
+  # Advanced event producers with different patterns
+  producer-high-freq:
+    build: ./services/producer-advanced
+    environment:
+      - REDIS_CLUSTER=redis-node-1:7001,redis-node-2:7002,redis-node-3:7003
+      - PRODUCER_TYPE=high_frequency
+      - RATE=2000
+      - BATCH_SIZE=100
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on: [redis-cluster-init]
+
+  producer-bursty:
+    build: ./services/producer-advanced
+    environment:
+      - REDIS_CLUSTER=redis-node-1:7001,redis-node-2:7002,redis-node-3:7003
+      - PRODUCER_TYPE=bursty
+      - RATE=500
+      - BURST_MULTIPLIER=10
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on: [redis-cluster-init]
+
+  # Multi-stage processing pipeline
+  processor-stage1:
+    build: ./services/processor-advanced
+    environment:
+      - REDIS_CLUSTER=redis-node-1:7001,redis-node-2:7002,redis-node-3:7003
+      - STAGE=enrichment
+      - CONSUMER_GROUP=stage1_group
+      - INPUT_STREAM=raw_events
+      - OUTPUT_STREAM=enriched_events
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on: [redis-cluster-init]
+    deploy:
+      replicas: 2
+
+  processor-stage2:
+    build: ./services/processor-advanced
+    environment:
+      - REDIS_CLUSTER=redis-node-1:7001,redis-node-2:7002,redis-node-3:7003
+      - STAGE=aggregation
+      - CONSUMER_GROUP=stage2_group
+      - INPUT_STREAM=enriched_events
+      - OUTPUT_STREAM=aggregated_events
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on: [redis-cluster-init]
+    deploy:
+      replicas: 3
+
+  # ML-powered anomaly detection
+  ml-detector:
+    build: ./services/ml-detector
+    environment:
+      - REDIS_CLUSTER=redis-node-1:7001,redis-node-2:7002,redis-node-3:7003
+      - MODEL_PATH=/models/anomaly_detector.pkl
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    volumes:
+      - ./ml-models:/models:ro
+    depends_on: [redis-cluster-init]
+
+  # Advanced API with GraphQL and real-time subscriptions
+  api-gateway:
+    build: ./services/api-advanced
+    environment:
+      - REDIS_CLUSTER=redis-node-1:7001,redis-node-2:7002,redis-node-3:7003
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    ports: ["8080:8080", "8081:8081"]
+    depends_on: [redis-cluster-init]
+
+  # Load balancer with circuit breaker
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports: ["80:80"]
+    depends_on: [api-gateway]
+
+  # Chaos engineering service
+  chaos-monkey:
+    build: ./services/chaos-monkey
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - CHAOS_INTERVAL=300
+      - FAILURE_RATE=0.1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on: [producer-high-freq, processor-stage1]
+
+volumes:
+  redis-1:
+  redis-2:
+  redis-3:

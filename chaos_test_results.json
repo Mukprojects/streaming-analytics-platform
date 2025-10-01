@@ -1,0 +1,17 @@
+[
+  {
+    "test": "processor_crash",
+    "baseline_events": 64557,
+    "final_events": 79470,
+    "events_during_test": 14913,
+    "downtime_seconds": 15,
+    "success": true
+  },
+  {
+    "test": "redis_partition",
+    "baseline_events": 94795,
+    "final_events": 101725,
+    "partition_seconds": 10,
+    "recovery_observed": true
+  }
+]

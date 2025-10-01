@@ -1,0 +1,70 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+rule_files:
+  - "rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Advanced producers
+  - job_name: 'producer-high-freq'
+    static_configs:
+      - targets: ['producer-high-freq:8000']
+    scrape_interval: 5s
+
+  - job_name: 'producer-bursty'
+    static_configs:
+      - targets: ['producer-bursty:8000']
+    scrape_interval: 5s
+
+  # Multi-stage processors
+  - job_name: 'processor-stage1'
+    static_configs:
+      - targets: ['processor-stage1:8000']
+    scrape_interval: 5s
+
+  - job_name: 'processor-stage2'
+    static_configs:
+      - targets: ['processor-stage2:8000']
+    scrape_interval: 5s
+
+  # ML detector
+  - job_name: 'ml-detector'
+    static_configs:
+      - targets: ['ml-detector:8000']
+    scrape_interval: 10s
+
+  # Advanced API
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:8080']
+    scrape_interval: 5s
+
+  # Chaos Monkey
+  - job_name: 'chaos-monkey'
+    static_configs:
+      - targets: ['chaos-monkey:8000']
+    scrape_interval: 30s
+
+  # Redis Cluster monitoring
+  - job_name: 'redis-cluster'
+    static_configs:
+      - targets: ['redis-node-1:7001', 'redis-node-2:7002', 'redis-node-3:7003']
+    scrape_interval: 10s
+
+  # Jaeger metrics
+  - job_name: 'jaeger'
+    static_configs:
+      - targets: ['jaeger:14269']
+    scrape_interval: 15s

@@ -1,0 +1,86 @@
+# Render.com Deployment Configuration
+# Free tier deployment with persistent storage
+
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=portfolio2024
+      - GF_SERVER_ROOT_URL=${RENDER_EXTERNAL_URL}
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+
+  producer:
+    build: ./producer
+    environment:
+      - REDIS_HOST=redis
+      - STREAM_KEY=events
+      - RATE=50
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  processor:
+    build: ./processor
+    environment:
+      - REDIS_HOST=redis
+      - STREAM_KEY=events
+      - CONSUMER_GROUP=event_group
+      - CONSUMER_NAME=proc-1
+      - AGG_KEY=aggregates
+      - METRICS_PORT=8000
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  api:
+    build: ./api
+    environment:
+      - REDIS_HOST=redis
+      - AGG_KEY=aggregates
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - processor
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  grafana_data:
+  prometheus_data:

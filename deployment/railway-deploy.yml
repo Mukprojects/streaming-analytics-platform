@@ -1,0 +1,69 @@
+# Railway.app Deployment Configuration
+# Simple one-click deployment for portfolio demonstration
+
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    environment:
+      - RAILWAY_STATIC_URL=true
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    environment:
+      - RAILWAY_STATIC_URL=true
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=demo123
+      - GF_SERVER_ROOT_URL=https://${RAILWAY_STATIC_URL}
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+
+  producer:
+    build: ./producer
+    environment:
+      - REDIS_HOST=redis
+      - STREAM_KEY=events
+      - RATE=100
+    depends_on:
+      - redis
+
+  processor:
+    build: ./processor
+    environment:
+      - REDIS_HOST=redis
+      - STREAM_KEY=events
+      - CONSUMER_GROUP=event_group
+      - CONSUMER_NAME=proc-1
+      - AGG_KEY=aggregates
+      - METRICS_PORT=8000
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+
+  api:
+    build: ./api
+    environment:
+      - REDIS_HOST=redis
+      - AGG_KEY=aggregates
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - processor

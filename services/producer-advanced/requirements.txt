@@ -1,0 +1,12 @@
+redis[hiredis]
+orjson
+numpy
+scipy
+faker
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-jaeger-thrift
+opentelemetry-instrumentation-redis
+prometheus-client
+asyncio-mqtt
+pydantic
