@@ -2,7 +2,7 @@
 
 > **Production-grade distributed streaming system processing 500+ events/second with comprehensive monitoring and real-time dashboards**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-🚀%20View%20System-blue?style=for-the-badge&logo=railway)](https://your-streaming-pipeline.railway.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-🚀%20View%20System-blue?style=for-the-badge&logo=railway)](https://streaming-analytics-platform.onrender.com/)
 [![Architecture](https://img.shields.io/badge/Architecture-📊%20Deep%20Dive-green?style=for-the-badge)](#architecture)
 [![Performance](https://img.shields.io/badge/Performance-⚡%20500%2B%20events%2Fsec-orange?style=for-the-badge)](#performance-metrics)
 [![GitHub](https://img.shields.io/badge/Source-💻%20Code-purple?style=for-the-badge&logo=github)](https://github.com/yourusername/streaming-analytics-platform)
